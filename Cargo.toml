@@ -1,0 +1,16 @@
+[package]
+name = "hyperliquid"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hyperliquid_rust_sdk = "0.3.0"
+tokio = { version = "1", features = ["full"] }
+tokio-tungstenite = { version = "0.15", features = ["rustls-tls"] }
+futures-util = "0.3"
+tungstenite = "0.12"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.113"
+reqwest = { version = "0.11", features = ["json"] }
