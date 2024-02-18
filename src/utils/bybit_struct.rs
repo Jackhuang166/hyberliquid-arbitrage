@@ -86,51 +86,24 @@ pub struct BybitApiResponse {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct BybitWsData {
-    pub symbol: String,
-    #[serde(rename = "tickDirection")]
-    tick_direction: String,
-    #[serde(rename = "price24hPcnt")]
-    price24h_pcnt: String,
-    #[serde(rename = "lastPrice")]
-    last_price: String,
-    #[serde(rename = "prevPrice24h")]
-    prev_price24h: String,
-    #[serde(rename = "highPrice24h")]
-    high_price24h: String,
-    #[serde(rename = "lowPrice24h")]
-    low_price24h: String,
-    #[serde(rename = "prevPrice1h")]
-    prev_price1h: String,
-    #[serde(rename = "markPrice")]
-    mark_price: String,
-    #[serde(rename = "indexPrice")]
-    index_price: String,
-    #[serde(rename = "openInterest")]
-    open_interest: String,
-    #[serde(rename = "openInterestValue")]
-    open_interest_value: String,
-    turnover24h: String,
-    volume24h: String,
-    #[serde(rename = "nextFundingTime")]
-    next_funding_time: String,
-    #[serde(rename = "fundingRate")]
-    funding_rate: String,
-    #[serde(rename = "bid1Price")]
-    bid1_price: String,
-    #[serde(rename = "bid1Size")]
-    bid1_size: String,
-    #[serde(rename = "ask1Price")]
-    ask1_price: String,
-    #[serde(rename = "ask1Size")]
-    ask1_size: String,
+    start: u64,
+    end: u64,
+    interval: String,
+    open: String,
+    pub close: String,
+    high: String,
+    low: String,
+    volume: String,
+    turnover: String,
+    confirm: bool,
+    timestamp: u64,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct BybitWsResponse {
-    topic: String,
+    pub topic: String,
+    pub data: Vec<BybitWsData>,
+    ts: u64,
     #[serde(rename = "type")]
     type_field: String,
-    data: BybitWsData,
-    cs: u64,
-    ts: u64,
 }

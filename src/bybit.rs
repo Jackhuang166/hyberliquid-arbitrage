@@ -1,7 +1,13 @@
+use std::sync::Arc;
+
 use futures_util::{SinkExt, StreamExt};
 use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 
-use crate::utils::{BybitApiResponse, BybitWsResponse};
+use crate::{
+    compare_price::compare_prices,
+    share_state::{self, SharedState},
+    utils::{BybitApiResponse, BybitWsResponse},
+};
 
 pub struct Bybit {
     instrument_api_url: String,
@@ -36,21 +42,20 @@ impl Bybit {
 
         Ok(tickers)
     }
-    pub async fn bybit_ws(&self) {
-        // pub async fn bybit_ws(&self, common_tickers: &Vec<String>) {
+    pub async fn bybit_ws(&self, common_tickers: &Vec<String>, shared_state: &Arc<SharedState>) {
         let (mut ws_stream, _) = connect_async(&self.ws_url)
             .await
             .expect("Failed connecting to bybit ws");
         println!("Bybit ws connected");
 
-        // let args: Vec<String> = common_tickers
-        //     .iter()
-        //     .map(|ticker| format!("tickers.{}", ticker))
-        //     .collect();
+        let args: Vec<String> = common_tickers
+            .iter()
+            .map(|ticker| format!("kline.1.{}", ticker))
+            .collect();
 
         let subscribe_message = serde_json::json!({
             "op": "subscribe",
-            "args": "tickers.BTCUSDT"
+            "args": args
         })
         .to_string();
 
@@ -61,10 +66,27 @@ impl Bybit {
 
         while let Some(message) = ws_stream.next().await {
             match message {
-                // Ok(Message::Text(text)) => match serde_json::from_str::<BybitWsResponse>(&text) {
-                //     Ok(parse_msg) => println!("bybit data: {:#?}", parse_msg),
-                //     Err(e) => eprintln!("failed parsing bybit data: {:#?}", e),
-                // },
+                Ok(Message::Text(text)) => match serde_json::from_str::<BybitWsResponse>(&text) {
+                    Ok(parse_msg) => {
+                        let symbol = parse_msg.topic.split(".").last().unwrap().to_string();
+                        if common_tickers.contains(&symbol) {
+                            let price: f64 = parse_msg.data[0].close.parse().unwrap();
+                            {
+                                let mut bybit_prices = shared_state.bybit_prices.write().await;
+                                bybit_prices.insert(symbol.clone(), price);
+                            }
+                            // let bybit_price_read = shared_state.bybit_prices.read().await;
+                            // println!("shared state: {:#?}", bybit_price_read);
+                            compare_prices(shared_state, &symbol).await;
+                        }
+                        // println!(
+                        //     "bybit data= symbol: {:#?} price: {:#?}",
+                        //     symbol, parse_msg.data[0].close
+                        // );
+                        // println!("bybit data...");
+                    }
+                    Err(e) => eprintln!("failed parsing bybit data: {:#?}", e),
+                },
                 Ok(data) => println!("not parse: {:#?}", data),
                 Err(e) => eprintln!("bybit ws error: {:#?}", e),
             }
