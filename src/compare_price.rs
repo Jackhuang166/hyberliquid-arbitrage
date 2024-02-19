@@ -26,7 +26,7 @@ pub async fn compare_prices(
         symbol, bybit_price, hyperliquid_price, difference
     );
 
-    if difference >= 5.0 || difference <= -5.0 {
+    if difference >= 5.0 {
         let tweet_text = format!(
             "5% difference for {}:\nBYBIT price: {}, HYPERLIQUID price: {}\nDIFFERENCE: {:.5}%\nTimestamp: {}",
             symbol, bybit_price, hyperliquid_price, difference, Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true)
