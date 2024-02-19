@@ -1,8 +1,11 @@
-use std::sync::Arc;
+use crate::{create_tweet::create_tweet, share_state::SharedState};
+use chrono::Utc;
+use std::{error, sync::Arc};
 
-use crate::share_state::SharedState;
-
-pub async fn compare_prices(shared_state: &Arc<SharedState>, symbol: &str) {
+pub async fn compare_prices(
+    shared_state: &Arc<SharedState>,
+    symbol: &str,
+) -> Result<(), Box<dyn error::Error>> {
     let bybit_price = {
         let bybit_prices = shared_state.bybit_prices.read().await;
         *bybit_prices.get(symbol).unwrap_or(&0.0)
@@ -14,7 +17,7 @@ pub async fn compare_prices(shared_state: &Arc<SharedState>, symbol: &str) {
     };
 
     if bybit_price == 0.0 || hyperliquid_price == 0.0 {
-        return;
+        return Ok(());
     }
 
     let difference = ((bybit_price - hyperliquid_price) / bybit_price).abs() * 100.0;
@@ -23,10 +26,21 @@ pub async fn compare_prices(shared_state: &Arc<SharedState>, symbol: &str) {
         symbol, bybit_price, hyperliquid_price, difference
     );
 
-    if difference >= 5.0 {
-        println!(
-            "5% difference for {}: bybit price: {}, hyperliquid price: {:.5}%",
-            symbol, bybit_price, hyperliquid_price
+    if difference >= 5.0 || difference <= -5.0 {
+        let tweet_text = format!(
+            "5% difference for {}:\nBYBIT price: {}, HYPERLIQUID price: {}\nDIFFERENCE: {:.5}%\nTimestamp: {}",
+            symbol, bybit_price, hyperliquid_price, difference, Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true)
         );
+        println!("@@@@@@@@@@{}@@@@@@@@@@", tweet_text);
+        create_tweet(&tweet_text).await?;
     }
+
+    // if symbol == "BTCUSDT" {
+    //     let tweet_text = format!(
+    //         "$BTC BTCUSDT:\nBYBIT price: {}, HYPERLIQUID price: {}, difference: {:.5}%\nTimestamp: {}",
+    //         bybit_price, hyperliquid_price, difference, Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true)
+    //     );
+    //     create_tweet(&tweet_text).await?;
+    // }
+    Ok(())
 }

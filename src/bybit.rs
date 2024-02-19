@@ -5,7 +5,7 @@ use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 
 use crate::{
     compare_price::compare_prices,
-    share_state::{self, SharedState},
+    share_state::SharedState,
     utils::{BybitApiResponse, BybitWsResponse},
 };
 
@@ -77,13 +77,10 @@ impl Bybit {
                             }
                             // let bybit_price_read = shared_state.bybit_prices.read().await;
                             // println!("shared state: {:#?}", bybit_price_read);
-                            compare_prices(shared_state, &symbol).await;
+                            compare_prices(shared_state, &symbol)
+                                .await
+                                .expect("Failed comparing price in bybit");
                         }
-                        // println!(
-                        //     "bybit data= symbol: {:#?} price: {:#?}",
-                        //     symbol, parse_msg.data[0].close
-                        // );
-                        // println!("bybit data...");
                     }
                     Err(e) => eprintln!("failed parsing bybit data: {:#?}", e),
                 },

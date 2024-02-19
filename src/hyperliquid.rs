@@ -1,12 +1,7 @@
-use std::{collections::HashMap, sync::Arc};
-
+use crate::{compare_price::compare_prices, share_state::SharedState};
 use hyperliquid_rust_sdk::{BaseUrl, InfoClient, Message, Subscription};
+use std::{collections::HashMap, sync::Arc};
 use tokio::sync::mpsc::unbounded_channel;
-
-use crate::{
-    compare_price::{self, compare_prices},
-    share_state::SharedState,
-};
 
 pub struct HyperLiquidStruct {
     info_client: InfoClient,
@@ -59,10 +54,10 @@ impl HyperLiquidStruct {
                 }
                 // let read_hyperliquid_prices = shared_state.hyperliquid_prices.read().await;
                 // println!("share state: {:#?}", read_hyperliquid_prices);
-                compare_prices(shared_state, &formatted_ticker).await;
+                compare_prices(shared_state, &formatted_ticker)
+                    .await
+                    .expect("Failed comparing price at hyperliquic");
             }
-            // println!("hyperliquid data: {:#?}", all_mids.data.mids);
-            // println!("hyperliquid data...");
         }
     }
 }
