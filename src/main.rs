@@ -21,6 +21,9 @@ fn get_common_tickers(bybit_tickers: Vec<String>, hyperliquid_tickers: Vec<Strin
 
 #[tokio::main]
 async fn main() {
+    create_tweet::create_tweet("Testing")
+        .await
+        .expect("Failed test tweeting");
     let hyper_liquid = HyperLiquidStruct::new().await;
     let bybit = Bybit::new();
     let shared_state = Arc::new(SharedState::new());
