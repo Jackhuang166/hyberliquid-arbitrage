@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use tokio::sync::RwLock;
 
@@ -6,6 +6,7 @@ use tokio::sync::RwLock;
 pub struct SharedState {
     pub bybit_prices: RwLock<HashMap<String, f64>>,
     pub hyperliquid_prices: RwLock<HashMap<String, f64>>,
+    pub tweeted_symbols: RwLock<HashSet<String>>,
 }
 
 impl SharedState {
@@ -13,6 +14,7 @@ impl SharedState {
         SharedState {
             bybit_prices: RwLock::new(HashMap::new()),
             hyperliquid_prices: RwLock::new(HashMap::new()),
+            tweeted_symbols: RwLock::new(HashSet::new()),
         }
     }
 }

@@ -1,7 +1,8 @@
 use crate::share_state::SharedState;
 use bybit::Bybit;
 use hyperliquid::HyperLiquidStruct;
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
+use tokio::time::interval;
 
 mod bybit;
 mod compare_price;
@@ -33,6 +34,7 @@ async fn main() {
         .expect("Error calling bybit get tickers");
 
     let common_tickers = get_common_tickers(bybit_tickers, hyperliquid_tickers);
+    // let common_tickers = vec!["BTCUSDT".to_string(), "ETHUSDT".to_string()];
 
     {
         let mut bybit_prices = shared_state.bybit_prices.write().await;
@@ -42,6 +44,19 @@ async fn main() {
             hyperliquid_price.insert(ticker.clone(), 0.0);
         }
     }
+
+    let shared_state_clone_reset = Arc::clone(&shared_state);
+    tokio::spawn(async move {
+        let mut interval = interval(Duration::from_secs(3600));
+        loop {
+            interval.tick().await;
+            {
+                let mut tweet_symbols = shared_state_clone_reset.tweeted_symbols.write().await;
+                tweet_symbols.clear();
+                println!("**************************************** Tweet symbols reset ****************************************");
+            }
+        }
+    });
 
     tokio::join!(
         hyper_liquid.hyperliquid_ws(&shared_state),
