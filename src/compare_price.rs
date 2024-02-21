@@ -36,6 +36,10 @@ pub async fn compare_prices(
                 symbol, bybit_price, hyperliquid_price, difference, Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true)
             );
             println!("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n{}\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", tweet_text);
+            println!(
+                ">5%: {:#?}, bybit price: {:#?}, hyperliquid price: {:#?}, difference: {:.5}%",
+                symbol, bybit_price, hyperliquid_price, difference
+            );
             create_tweet(&tweet_text).await?;
 
             let mut tweeted_symbols = shared_state.tweeted_symbols.write().await;

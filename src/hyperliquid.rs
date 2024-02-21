@@ -54,9 +54,9 @@ impl HyperLiquidStruct {
                 }
                 // let read_hyperliquid_prices = shared_state.hyperliquid_prices.read().await;
                 // println!("share state: {:#?}", read_hyperliquid_prices);
-                compare_prices(shared_state, &formatted_ticker)
-                    .await
-                    .expect("Failed comparing price at hyperliquic");
+                // compare_prices(shared_state, &formatted_ticker)
+                //     .await
+                //     .expect("Failed comparing price at hyperliquic");
             }
         }
     }

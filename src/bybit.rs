@@ -50,7 +50,7 @@ impl Bybit {
 
         let args: Vec<String> = common_tickers
             .iter()
-            .map(|ticker| format!("kline.1.{}", ticker))
+            .map(|ticker| format!("kline.D.{}", ticker))
             .collect();
 
         let subscribe_message = serde_json::json!({
@@ -76,7 +76,7 @@ impl Bybit {
                                 bybit_prices.insert(symbol.clone(), price);
                             }
                             // let bybit_price_read = shared_state.bybit_prices.read().await;
-                            // println!("shared state: {:#?}", bybit_price_read);
+                            // println!("shared state bybit: {:#?}", bybit_price_read);
                             compare_prices(shared_state, &symbol)
                                 .await
                                 .expect("Failed comparing price in bybit");

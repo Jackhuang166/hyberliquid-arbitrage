@@ -34,7 +34,6 @@ async fn main() {
         .expect("Error calling bybit get tickers");
 
     let common_tickers = get_common_tickers(bybit_tickers, hyperliquid_tickers);
-    // let common_tickers = vec!["BTCUSDT".to_string(), "ETHUSDT".to_string()];
 
     {
         let mut bybit_prices = shared_state.bybit_prices.write().await;
