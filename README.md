@@ -1,36 +1,130 @@
-# Arbitrage
 
-A crypto arbitrage script that track price from bybit and hyperliquid with twitter notification
+#  Hyperliquid Arbitrage Bot
 
-<img width="714" alt="Screenshot 2024-02-19 at 1 41 04 PM" src="https://github.com/xatxay/arbitrage/assets/29783278/0d9cf4c8-eed4-48c7-9b45-cff85e4e1479">
+A **Rust-based cryptocurrency arbitrage bot** that monitors price differences between **Bybit (USDT Perpetuals)** and **Hyperliquid** and sends **real-time arbitrage alerts** via **Twitter (X)**. Stay ahead of the market with automated price tracking and spread detection.
+
+![License](https://img.shields.io/badge/license-MIT-green)
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
+![Status](https://img.shields.io/badge/status-active-success)
 
 
-## App Features
 
--Notify when there's a 5% price difference on both sides
+##  Features
+- 🔍 **Real-Time Price Monitoring** – Tracks price differences between Bybit and Hyperliquid
+- 🚨 **Arbitrage Alerts** – Sends Twitter alerts when a price spread ≥ 5%
+- ⚡ **Fast & Lightweight** – Optimized Python script for quick execution
+- 🔧 **Easy Setup** – Simple `.env` configuration for API keys and parameters
 
--Get notification [here](https://twitter.com/IrregularArb)
 
-## Exchange Supported
+##  Arbitrage Logic
 
-Bybit: USDT perps
+The bot scans both exchanges in real time and calculates arbitrage profit potential.
 
-Hyperliquid
+###  Workflow:
+1. **Fetch Prices**  
+   Retrieve bid/ask data from Bybit and Hyperliquid.
+2. **Calculate Spread**  
+   ```text
+   Spread % = |(Price_High - Price_Low) / Price_Low * 100|
 
-### Clone repository
+3. **Check Opportunity**
 
-To clone the repository, use the following commands:
+   * If **Price_Hyperliquid > Price_Bybit → Buy on Bybit, Sell on Hyperliquid**
+   * If **Price_Bybit > Price_Hyperliquid → Buy on Hyperliquid, Sell on Bybit**
+4. **Trigger Alert**
+   When spread ≥ **5%**, send Twitter notification with:
 
-```sh
+   * Trading pair
+   * Price difference %
+   * Potential arbitrage direction
+
+Includes latency-aware updates and basic fee/slippage filtering.
+
+
+## 💱 Supported Exchanges
+
+| Exchange    | Type                   |
+| ----------- | ---------------------- |
+| Bybit       | USDT Perpetual Futures |
+| Hyperliquid | Perpetual DEX          |
+
+
+
+## Installation
+
+### 1. Clone Repository
+
+```bash
 git clone https://github.com/xatxay/arbitrage
+cd arbitrage
 ```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configure Credentials
+
+Create `.env` file:
+
+```env
+BYBIT_API_KEY=your_bybit_api_key
+BYBIT_API_SECRET=your_bybit_api_secret
+
+HYPERLIQUID_API_KEY=your_hyperliquid_api_key
+HYPERLIQUID_API_SECRET=your_hyperliquid_api_secret
+
+TWITTER_API_KEY=your_twitter_api_key
+TWITTER_API_SECRET=your_twitter_api_secret
+TWITTER_ACCESS_TOKEN=your_twitter_access_token
+TWITTER_ACCESS_TOKEN_SECRET=your_twitter_access_token_secret
+```
+
+
+## Usage
+
+Run the bot with:
+
+```bash
+python main.py
+```
+
+* Monitors **BTC/USDT** (default)
+* Sends arbitrage alerts on **Twitter (X)**
+* Adjustable threshold in code (`5% default`)
+
+
 
 ## Future Features
 
--Multiple exchanges support
+* ✅ Support more exchanges (Binance, OKX, KuCoin)
+* ✅ Auto-arbitrage execution mode
+* ✅ Telegram/Discord bot notifications
+* ✅ Risk engine (fees, slippage, liquidation)
+* ✅ Portfolio PnL dashboard
 
--Place order
 
-## Contributions & Pull Requests
 
-Feel free to create issues, PRs and start a discussion
+## Contributing
+
+Contributions are welcome!
+
+```bash
+# Fork & clone
+git checkout -b feature/my-feature
+git commit -m "Added new feature"
+git push origin feature/my-feature
+```
+
+Open a **Pull Request** 🚀
+
+
+
+## Contact
+
+For support, custom trading bots, or private development:
+
+📩 **Telegram:** [@lorine93s](https://t.me/lorine93s)
+
